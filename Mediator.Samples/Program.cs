@@ -1,12 +1,10 @@
-﻿using Mediator.Abstractions;
+﻿using Mediator;
+using Mediator.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection();
-
-
-services.AddTransient<IMediator, Mediator.Mediator>();
+services.AddMediator(typeof(Program).Assembly);
 services.AddTransient<AccountRepository>(); 
-services.AddTransient<IHandler<CreateAccountCommand, string>, CreateAccountHandler>();
 
 var servicesProvider = services.BuildServiceProvider();
 var mediator = servicesProvider.GetRequiredService<IMediator>();
