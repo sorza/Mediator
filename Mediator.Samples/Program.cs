@@ -1,5 +1,5 @@
-﻿using Mediator;
-using Mediator.Abstractions;
+﻿using Mediator.Abstractions;
+using Mediator.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection();
