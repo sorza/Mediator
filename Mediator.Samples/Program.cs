@@ -1,6 +1,45 @@
-﻿// See https://aka.ms/new-console-template for more information
-using Mediator.Abstractions;
+﻿using Mediator.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
-Console.WriteLine("Hello, World!");
+var services = new ServiceCollection();
 
+
+services.AddTransient<IMediator, Mediator.Mediator>();
+services.AddTransient<AccountRepository>(); 
+services.AddTransient<IHandler<CreateAccountCommand, string>, CreateAccountHandler>();
+
+var servicesProvider = services.BuildServiceProvider();
+var mediator = servicesProvider.GetRequiredService<IMediator>();
+
+var repository = new AccountRepository();
+var request = new CreateAccountCommand { Username = "Admin", Password = "12345" };
+
+var result = await mediator.SendAsync(request);
+
+Console.WriteLine(result);
+
+public class AccountRepository
+{
+    public void Save()
+    {
+        Console.WriteLine("Saving...");
+    }
+}
+
+public class CreateAccountCommand : IRequest<string>
+{
+    public string Username { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+
+}
+
+public class CreateAccountHandler(AccountRepository accountRepository) : IHandler<CreateAccountCommand, string>
+{
+    public Task<string> HandleAsync(CreateAccountCommand request, CancellationToken cancellationToken = default)
+    {
+        Console.WriteLine($"Creating {request.Username} account...");
+        accountRepository.Save();
+        return Task.FromResult($"{request.Username} account created." );
+    }
+}
 
